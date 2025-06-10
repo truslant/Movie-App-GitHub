@@ -7,9 +7,11 @@ const axios = require('axios');
 
 const apiKey = process.env.API_KEY;
 
-const apiBaseUrl = 'http://localhost:3000';
-const nowPlayingUrl = `${apiBaseUrl}/most_popular?api_key=${apiKey}`;
+const apiBaseUrl = 'http://api.themoviedb.org/3';
+const nowPlayingUrl = `${apiBaseUrl}/movie/now_playing?api_key=${apiKey}`;
 const imageBaseUrl = 'http://image.tmdb.org/t/p/w300';
+
+
 
 router.use((req, res, next) => {
   res.locals.imageBaseUrl = imageBaseUrl;
@@ -19,11 +21,12 @@ router.use((req, res, next) => {
 /* GET home page. */
 router.get('/', function (req, res, next) {
   console.log(nowPlayingUrl);
+  // console.log(req.session.passport.user.username);
   axios.get(nowPlayingUrl)
     .then(answer => {
-      console.log(answer.data.result);
       res.render('index', {
-        moviesData: answer.data.result
+        moviesData: answer.data.results,
+
       });
     })
 });
@@ -33,9 +36,8 @@ router.get('/movie/:movieId', (req, res, next) => {
   const movieURL = `${apiBaseUrl}/movie/${movieId}?api_key=${apiKey}`;
   axios.get(movieURL)
     .then(movie => {
-      console.log(movie.data);
       res.render('single-movie', {
-        movie: movie.data.result
+        movie: movie.data
       });
     })
 });
